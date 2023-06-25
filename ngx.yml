@@ -1,0 +1,41 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mynginx-deployment
+  labels:
+    app: mynginx
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: mynginx
+  template:
+    metadata:
+      labels:
+        app: mynginx
+    spec:
+      containers:
+        - name: mynginx
+          image: nxtcloud.azurecr.io/newimg2:d2
+          ports:
+            - containerPort: 80
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mynginx
+  namespace: default
+  labels:
+    app: mynginx
+spec:
+  externalTrafficPolicy: Local
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: mynginx
+  type: LoadBalancer
